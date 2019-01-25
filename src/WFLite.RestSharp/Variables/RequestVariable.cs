@@ -77,7 +77,8 @@ namespace WFLite.RestSharp.Variables
             IDictionary<string, IVariable> headers = null,
             IDictionary<string, IVariable> queryParameters = null,
             IDictionary<string, IVariable> cookies = null,
-            IVariable body = null)
+            IVariable body = null,
+            IConverter converter = null)
         {
             Resource = resource;
             Method = method;
@@ -86,6 +87,7 @@ namespace WFLite.RestSharp.Variables
             QueryParameters = queryParameters;
             Cookies = cookies;
             Body = body;
+            Converter = converter;  // TODO
         }
 
         protected sealed override object getValue()

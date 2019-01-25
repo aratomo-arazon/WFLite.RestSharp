@@ -40,11 +40,11 @@ namespace WFLite.RestSharp.Activities.Activities
         {
         }
 
-        public RestAsyncActivity(IVariable request, IVariable response, IVariable baseUrl = null)
+        public RestAsyncActivity(IVariable baseUrl, IVariable request, IVariable response)
         {
+            BaseUrl = baseUrl;
             Request = request;
             Response = response;
-            BaseUrl = baseUrl;
         }
 
         protected sealed override async Task<bool> run(CancellationToken cancellationToken)
@@ -89,6 +89,11 @@ namespace WFLite.RestSharp.Activities.Activities
 
     public class RestAsyncActivity<TData> : RestAsyncActivity
     {
+        public RestAsyncActivity(IVariable baseUrl = null, IVariable request = null, IVariable response = null)
+            : base(baseUrl, request, response)
+        {
+        }
+
         protected override async Task<object> executeTaskAsync(IRestClient client, IRestRequest request)
         {
             return await client.ExecuteTaskAsync<TData>(request);

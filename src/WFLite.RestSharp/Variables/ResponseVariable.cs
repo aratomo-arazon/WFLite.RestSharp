@@ -142,7 +142,8 @@ namespace WFLite.RestSharp.Variables
             IVariable contentLength = null,
             IVariable contentType = null,
             IVariable statusDescription = null,
-            IVariable protocolVersion = null)
+            IVariable protocolVersion = null,
+            IConverter converter = null)
         {
             Request = request;
             ErrorMessage = errorMessage;
@@ -161,6 +162,7 @@ namespace WFLite.RestSharp.Variables
             ContentType = contentType;
             StatusDescription = statusDescription;
             ProtocolVersion = protocolVersion;
+            Converter = converter;  // TODO
         }
 
         protected sealed override object getValue()

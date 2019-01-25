@@ -38,7 +38,7 @@ namespace WFLite.RestSharp.Activities
         {
         }
 
-        public RestActivity(IVariable request, IVariable response, IVariable baseUrl = null)
+        public RestActivity(IVariable baseUrl, IVariable request, IVariable response)
         {
             BaseUrl = baseUrl;
             Request = request;
@@ -88,6 +88,11 @@ namespace WFLite.RestSharp.Activities
     public class RestActivity<TData> : RestActivity
         where TData : new()
     {
+        public RestActivity(IVariable baseUrl = null, IVariable request = null, IVariable response = null)
+            : base(baseUrl, request, response)
+        {
+        }
+
         protected override object execute(IRestClient client, IRestRequest request)
         {
             return client.Execute<TData>(request);
