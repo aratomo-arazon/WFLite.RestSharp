@@ -144,6 +144,7 @@ namespace WFLite.RestSharp.Variables
             IVariable statusDescription = null,
             IVariable protocolVersion = null,
             IConverter converter = null)
+            : base(converter)
         {
             Request = request;
             ErrorMessage = errorMessage;
@@ -162,7 +163,6 @@ namespace WFLite.RestSharp.Variables
             ContentType = contentType;
             StatusDescription = statusDescription;
             ProtocolVersion = protocolVersion;
-            Converter = converter;  // TODO
         }
 
         protected sealed override object getValue()

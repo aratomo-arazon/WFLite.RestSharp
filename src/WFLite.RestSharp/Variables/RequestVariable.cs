@@ -79,6 +79,7 @@ namespace WFLite.RestSharp.Variables
             IDictionary<string, IVariable> cookies = null,
             IVariable body = null,
             IConverter converter = null)
+            : base(converter)
         {
             Resource = resource;
             Method = method;
@@ -87,7 +88,6 @@ namespace WFLite.RestSharp.Variables
             QueryParameters = queryParameters;
             Cookies = cookies;
             Body = body;
-            Converter = converter;  // TODO
         }
 
         protected sealed override object getValue()
