@@ -18,19 +18,19 @@ namespace WFLite.RestSharp.Activities.Activities
 {
     public class RestAsyncActivity : AsyncActivity
     {
-        public IVariable BaseUrl
+        public IOutVariable BaseUrl
         {
             private get;
             set;
         }
 
-        public IVariable Request
+        public IOutVariable<IRestRequest> Request
         {
             private get;
             set;
         }
 
-        public IVariable Response
+        public IInVariable<IRestResponse> Response
         {
             private get;
             set;
@@ -40,7 +40,7 @@ namespace WFLite.RestSharp.Activities.Activities
         {
         }
 
-        public RestAsyncActivity(IVariable baseUrl, IVariable request, IVariable response)
+        public RestAsyncActivity(IOutVariable baseUrl, IOutVariable<IRestRequest> request, IInVariable<IRestResponse> response)
         {
             BaseUrl = baseUrl;
             Request = request;
@@ -53,7 +53,7 @@ namespace WFLite.RestSharp.Activities.Activities
 
             if (BaseUrl != null)
             {
-                var baseUrl = BaseUrl.GetValue();
+                var baseUrl = BaseUrl.GetValueAsObject();
                 if (baseUrl is Uri)
                 {
                     client = new RestClient(baseUrl as Uri);
@@ -72,7 +72,7 @@ namespace WFLite.RestSharp.Activities.Activities
                 client = new RestClient();
             }
 
-            var request = Request.GetValue<RestRequest>();
+            var request = Request.GetValue();
 
             var response = await executeTaskAsync(client, request);
 
@@ -89,7 +89,11 @@ namespace WFLite.RestSharp.Activities.Activities
 
     public class RestAsyncActivity<TData> : RestAsyncActivity
     {
-        public RestAsyncActivity(IVariable baseUrl = null, IVariable request = null, IVariable response = null)
+        public RestAsyncActivity()
+        {
+        }
+
+        public RestAsyncActivity(IOutVariable baseUrl, IOutVariable<IRestRequest> request, IInVariable<IRestResponse> response)
             : base(baseUrl, request, response)
         {
         }

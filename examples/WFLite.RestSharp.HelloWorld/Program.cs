@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using WFLite.Activities;
 using WFLite.Activities.Console;
@@ -14,8 +15,8 @@ namespace WFLite.RestSharp.HelloWorld
     {
         static async Task Main(string[] args)
         {
-            var statusCode = new AnyVariable();
-            var data = new AnyVariable();
+            var statusCode = new AnyVariable<HttpStatusCode>();
+            var data = new AnyVariable<string>();
 
             var activity = new SequenceActivity()
             {

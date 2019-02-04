@@ -8,114 +8,114 @@
  */
 
 using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using WFLite.Bases;
 using WFLite.Interfaces;
 
 namespace WFLite.RestSharp.Variables
 {
-    public class ResponseVariable : Variable
+    public class ResponseVariable : InVariable<IRestResponse>
     {
-        private IRestResponse _response;
-
-        public IVariable Request
+        public IInVariable<IRestRequest> Request
         {
             private get;
             set;
         }
 
-        public IVariable ErrorMessage
+        public IInVariable<string> ErrorMessage
         {
             private get;
             set;
         }
 
-        public IVariable ResponseStatus
+        public IInVariable<ResponseStatus> ResponseStatus
         {
             private get;
             set;
         }
 
-        public IDictionary<string, IVariable> Headers
+        public IDictionary<string, IInVariable> Headers
         {
             private get;
             set;
         }
 
-        public IDictionary<string, IVariable> Cookies
+        public IDictionary<string, IInVariable<string>> Cookies
         {
             private get;
             set;
         }
 
-        public IVariable Server
+        public IInVariable<string> Server
         {
             private get;
             set;
         }
 
-        public IVariable ResponseUri
+        public IInVariable<Uri> ResponseUri
         {
             private get;
             set;
         }
 
-        public IVariable ErrorException
+        public IInVariable<Exception> ErrorException
         {
             private get;
             set;
         }
 
-        public IVariable RawBytes
+        public IInVariable<byte[]> RawBytes
         {
             private get;
             set;
         }
 
-        public IVariable IsSuccessful
+        public IInVariable<bool> IsSuccessful
         {
             private get;
             set;
         }
 
-        public IVariable StatusCode
+        public IInVariable<HttpStatusCode> StatusCode
         {
             private get;
             set;
         }
 
-        public IVariable Content
+        public IInVariable<string> Content
         {
             private get;
             set;
         }
 
-        public IVariable ContentEncoding
+        public IInVariable<string> ContentEncoding
         {
             private get;
             set;
         }
 
-        public IVariable ContentLength
+        public IInVariable<long> ContentLength
         {
             private get;
             set;
         }
 
-        public IVariable ContentType
+        public IInVariable<string> ContentType
         {
             private get;
             set;
         }
 
-        public IVariable StatusDescription
+        public IInVariable<string> StatusDescription
         {
             private get;
             set;
         }
 
-        public IVariable ProtocolVersion
+        public IInVariable<Version> ProtocolVersion
         {
             private get;
             set;
@@ -126,25 +126,23 @@ namespace WFLite.RestSharp.Variables
         }
 
         public ResponseVariable(
-            IVariable request = null,
-            IVariable errorMessage = null,
-            IVariable responseStatus = null,
-            IDictionary<string, IVariable> headers = null,
-            IDictionary<string, IVariable> cookies = null,
-            IVariable server = null,
-            IVariable responseUri = null,
-            IVariable errorException = null,
-            IVariable rawBytes = null,
-            IVariable isSuccessful = null,
-            IVariable statusCode = null,
-            IVariable content = null,
-            IVariable contentEncoding = null,
-            IVariable contentLength = null,
-            IVariable contentType = null,
-            IVariable statusDescription = null,
-            IVariable protocolVersion = null,
-            IConverter converter = null)
-            : base(converter)
+            IInVariable<IRestRequest> request = null,
+            IInVariable<string> errorMessage = null,
+            IInVariable<ResponseStatus> responseStatus = null,
+            IDictionary<string, IInVariable> headers = null,
+            IDictionary<string, IInVariable<string>> cookies = null,
+            IInVariable<string> server = null,
+            IInVariable<Uri> responseUri = null,
+            IInVariable<Exception> errorException = null,
+            IInVariable<byte[]> rawBytes = null,
+            IInVariable<bool> isSuccessful = null,
+            IInVariable<HttpStatusCode> statusCode = null,
+            IInVariable<string> content = null,
+            IInVariable<string> contentEncoding = null,
+            IInVariable<long> contentLength = null,
+            IInVariable<string> contentType = null,
+            IInVariable<string> statusDescription = null,
+            IInVariable<Version> protocolVersion = null)
         {
             Request = request;
             ErrorMessage = errorMessage;
@@ -165,35 +163,30 @@ namespace WFLite.RestSharp.Variables
             ProtocolVersion = protocolVersion;
         }
 
-        protected sealed override object getValue()
-        {
-            return _response;
-        }
-
         protected sealed override void setValue(object value)
         {
-            _response = value as IRestResponse;
+            var response = value as IRestResponse;
 
             if (Request != null)
             {
-                Request.SetValue(_response.Request);
+                Request.SetValue(response.Request);
             }
 
             if (ErrorMessage != null)
             {
-                ErrorMessage.SetValue(_response.ErrorMessage);
+                ErrorMessage.SetValue(response.ErrorMessage);
             }
 
             if (ResponseStatus != null)
             {
-                ResponseStatus.SetValue(_response.ResponseStatus);
+                ResponseStatus.SetValue(response.ResponseStatus);
             }
 
             if (Headers != null)
             {
                 foreach (var header in Headers)
                 {
-                    var headerValue = _response.Headers.FirstOrDefault(h => h.Name == header.Key);
+                    var headerValue = response.Headers.FirstOrDefault(h => h.Name == header.Key);
                     if (headerValue != null)
                     {
                         header.Value.SetValue(headerValue.Value);
@@ -205,7 +198,7 @@ namespace WFLite.RestSharp.Variables
             {
                 foreach (var cookie in Cookies)
                 {
-                    var cookieValue = _response.Cookies.FirstOrDefault(c => c.Name == cookie.Key);
+                    var cookieValue = response.Cookies.FirstOrDefault(c => c.Name == cookie.Key);
                     if (cookieValue != null)
                     {
                         cookie.Value.SetValue(cookieValue.Value);
@@ -215,65 +208,65 @@ namespace WFLite.RestSharp.Variables
 
             if (Server != null)
             {
-                Server.SetValue(_response.Server);
+                Server.SetValue(response.Server);
             }
 
             if (ResponseUri != null)
             {
-                ResponseUri.SetValue(_response.ResponseUri);
+                ResponseUri.SetValue(response.ResponseUri);
             }
 
             if (ErrorException != null)
             {
-                ErrorException.SetValue(_response.ErrorException);
+                ErrorException.SetValue(response.ErrorException);
             }
 
             if (RawBytes != null)
             {
-                RawBytes.SetValue(_response.RawBytes);
+                RawBytes.SetValue(response.RawBytes);
             }
 
             if (IsSuccessful != null)
             {
-                IsSuccessful.SetValue(_response.IsSuccessful);
+                IsSuccessful.SetValue(response.IsSuccessful);
             }
 
             if (StatusCode != null)
             {
-                StatusCode.SetValue(_response.StatusCode);
+                StatusCode.SetValue(response.StatusCode);
             }
 
             if (Content != null)
             {
-                Content.SetValue(_response.Content);
+                Content.SetValue(response.Content);
             }
 
             if (ContentEncoding != null)
             {
-                ContentEncoding.SetValue(_response.ContentEncoding);
+                ContentEncoding.SetValue(response.ContentEncoding);
             }
 
             if (ContentLength != null)
             {
-                ContentLength.SetValue(_response.ContentLength);
+                ContentLength.SetValue(response.ContentLength);
             }
 
             if (ContentType != null)
             {
-                ContentType.SetValue(_response.ContentType);
+                ContentType.SetValue(response.ContentType);
             }
 
             if (StatusDescription != null)
             {
-                StatusDescription.SetValue(_response.StatusDescription);
+                StatusDescription.SetValue(response.StatusDescription);
             }
 
             if (ProtocolVersion != null)
             {
-                ProtocolVersion.SetValue(_response.ProtocolVersion);
+                ProtocolVersion.SetValue(response.ProtocolVersion);
             }
 
-            setExtraValues(_response);
+            setExtraValues(response);
         }
 
         protected virtual void setExtraValues(IRestResponse response)
@@ -283,7 +276,7 @@ namespace WFLite.RestSharp.Variables
 
     public class ResponseVariable<TData> : ResponseVariable
     {
-        public IVariable Data
+        public IInVariable<TData> Data
         {
             private get;
             set;
@@ -294,24 +287,24 @@ namespace WFLite.RestSharp.Variables
         }
 
         public ResponseVariable(
-            IVariable request = null,
-            IVariable errorMessage = null,
-            IVariable responseStatus = null,
-            IDictionary<string, IVariable> headers = null,
-            IDictionary<string, IVariable> cookies = null,
-            IVariable server = null,
-            IVariable responseUri = null,
-            IVariable errorException = null,
-            IVariable rawBytes = null,
-            IVariable isSuccessful = null,
-            IVariable statusCode = null,
-            IVariable content = null,
-            IVariable contentEncoding = null,
-            IVariable contentLength = null,
-            IVariable contentType = null,
-            IVariable statusDescription = null,
-            IVariable protocolVersion = null,
-            IVariable data = null)
+            IInVariable<IRestRequest> request = null,
+            IInVariable<string> errorMessage = null,
+            IInVariable<ResponseStatus> responseStatus = null,
+            IDictionary<string, IInVariable> headers = null,
+            IDictionary<string, IInVariable<string>> cookies = null,
+            IInVariable<string> server = null,
+            IInVariable<Uri> responseUri = null,
+            IInVariable<Exception> errorException = null,
+            IInVariable<byte[]> rawBytes = null,
+            IInVariable<bool> isSuccessful = null,
+            IInVariable<HttpStatusCode> statusCode = null,
+            IInVariable<string> content = null,
+            IInVariable<string> contentEncoding = null,
+            IInVariable<long> contentLength = null,
+            IInVariable<string> contentType = null,
+            IInVariable<string> statusDescription = null,
+            IInVariable<Version> protocolVersion = null,
+            IInVariable<TData> data = null)
             : base(
                   request,
                   errorMessage,

@@ -15,52 +15,52 @@ using WFLite.Interfaces;
 
 namespace WFLite.RestSharp.Variables
 {
-    public class RequestVariable : Variable
+    public class RequestVariable : OutVariable<IRestRequest>
     {
         private IRestRequest _request;
 
-        public IVariable Resource
+        public IOutVariable Resource
         {
             private get;
             set;
         }
 
-        public IVariable Method
+        public IOutVariable<Method> Method
         {
             private get;
             set;
         }
 
-        public IVariable DataFormat
+        public IOutVariable<DataFormat> DataFormat
         {
             private get;
             set;
         }
-        public IDictionary<string, IVariable> Headers
-        {
-            private get;
-            set;
-        }
-
-        public IDictionary<string, IVariable> QueryParameters
+        public IDictionary<string, IOutVariable> Headers
         {
             private get;
             set;
         }
 
-        public IDictionary<string, IVariable> Cookies
+        public IDictionary<string, IOutVariable> QueryParameters
         {
             private get;
             set;
         }
 
-        public IVariable Body
+        public IDictionary<string, IOutVariable> Cookies
         {
             private get;
             set;
         }
 
-        public IDictionary<string, IVariable> UrlSegments
+        public IOutVariable Body
+        {
+            private get;
+            set;
+        }
+
+        public IDictionary<string, IOutVariable> UrlSegments
         {
             private get;
             set;
@@ -71,14 +71,14 @@ namespace WFLite.RestSharp.Variables
         }
 
         public RequestVariable(
-            IVariable resource = null,
-            IVariable method = null,
-            IVariable dataFormat = null,
-            IDictionary<string, IVariable> headers = null,
-            IDictionary<string, IVariable> queryParameters = null,
-            IDictionary<string, IVariable> cookies = null,
-            IVariable body = null,
-            IConverter converter = null)
+            IOutVariable resource = null,
+            IOutVariable<Method> method = null,
+            IOutVariable<DataFormat> dataFormat = null,
+            IDictionary<string, IOutVariable> headers = null,
+            IDictionary<string, IOutVariable> queryParameters = null,
+            IDictionary<string, IOutVariable> cookies = null,
+            IOutVariable body = null,
+            IConverter<IRestRequest> converter = null)
             : base(converter)
         {
             Resource = resource;
@@ -94,16 +94,16 @@ namespace WFLite.RestSharp.Variables
         {
             if (Resource != null)
             {
-                var resource = Resource.GetValue();
+                var resource = Resource.GetValueAsObject();
                 if (resource is Uri)
                 {
                     if (Method != null && DataFormat != null)
                     {
-                        _request = new RestRequest(resource as Uri, Method.GetValue<Method>(), DataFormat.GetValue<DataFormat>());
+                        _request = new RestRequest(resource as Uri, Method.GetValue(), DataFormat.GetValue());
                     }
                     else if (Method != null)
                     {
-                        _request = new RestRequest(resource as Uri, Method.GetValue<Method>());
+                        _request = new RestRequest(resource as Uri, Method.GetValue());
                     }
                     else
                     {
@@ -114,11 +114,11 @@ namespace WFLite.RestSharp.Variables
                 {
                     if (Method != null && DataFormat != null)
                     {
-                        _request = new RestRequest(resource as string, Method.GetValue<Method>(), DataFormat.GetValue<DataFormat>());
+                        _request = new RestRequest(resource as string, Method.GetValue(), DataFormat.GetValue());
                     }
                     else if (Method != null)
                     {
-                        _request = new RestRequest(resource as string, Method.GetValue<Method>());
+                        _request = new RestRequest(resource as string, Method.GetValue());
                     }
                     else
                     {
@@ -139,7 +139,7 @@ namespace WFLite.RestSharp.Variables
             {
                 foreach (var header in Headers)
                 {
-                    _request.AddParameter(header.Key, header.Value.GetValue(), ParameterType.HttpHeader);
+                    _request.AddParameter(header.Key, header.Value.GetValueAsObject(), ParameterType.HttpHeader);
                 }
             }
 
@@ -147,7 +147,7 @@ namespace WFLite.RestSharp.Variables
             {
                 foreach (var queryParameter in QueryParameters)
                 {
-                    _request.AddParameter(queryParameter.Key, queryParameter.Value.GetValue(), ParameterType.QueryString);
+                    _request.AddParameter(queryParameter.Key, queryParameter.Value.GetValueAsObject(), ParameterType.QueryString);
                 }
             }
             
@@ -155,29 +155,24 @@ namespace WFLite.RestSharp.Variables
             {
                 foreach (var cookie in Cookies)
                 {
-                    _request.AddParameter(cookie.Key, cookie.Value.GetValue(), ParameterType.Cookie);
+                    _request.AddParameter(cookie.Key, cookie.Value.GetValueAsObject(), ParameterType.Cookie);
                 }
             }
 
             if (Body != null)
             {
-                _request.AddParameter("application/json", Body.GetValue(), ParameterType.RequestBody);
+                _request.AddParameter("application/json", Body.GetValueAsObject(), ParameterType.RequestBody);
             }
 
             if (UrlSegments != null)
             {
                 foreach (var urlSegment in UrlSegments)
                 {
-                    _request.AddParameter(urlSegment.Key, urlSegment.Value.GetValue(), ParameterType.UrlSegment);
+                    _request.AddParameter(urlSegment.Key, urlSegment.Value.GetValueAsObject(), ParameterType.UrlSegment);
                 }
             }
 
             return _request;
-        }
-
-        protected sealed override void setValue(object value)
-        {
-            _request = value as IRestRequest;
         }
     }
 }

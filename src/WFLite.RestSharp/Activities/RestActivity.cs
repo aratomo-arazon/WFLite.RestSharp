@@ -16,19 +16,19 @@ namespace WFLite.RestSharp.Activities
 {
     public class RestActivity : SyncActivity
     {
-        public IVariable BaseUrl
+        public IOutVariable BaseUrl
         {
             private get;
             set;
         }
 
-        public IVariable Request
+        public IOutVariable<IRestRequest> Request
         {
             protected get;
             set;
         }
 
-        public IVariable Response
+        public IInVariable<IRestResponse> Response
         {
             protected get;
             set;
@@ -38,7 +38,7 @@ namespace WFLite.RestSharp.Activities
         {
         }
 
-        public RestActivity(IVariable baseUrl, IVariable request, IVariable response)
+        public RestActivity(IOutVariable baseUrl, IOutVariable<IRestRequest> request, IInVariable<IRestResponse> response)
         {
             BaseUrl = baseUrl;
             Request = request;
@@ -51,7 +51,7 @@ namespace WFLite.RestSharp.Activities
 
             if (BaseUrl != null)
             {
-                var baseUrl = BaseUrl.GetValue();
+                var baseUrl = BaseUrl.GetValueAsObject();
                 if (baseUrl is Uri)
                 {
                     client = new RestClient(baseUrl as Uri);
@@ -70,7 +70,7 @@ namespace WFLite.RestSharp.Activities
                 client = new RestClient();
             }
 
-            var request = Request.GetValue<RestRequest>();
+            var request = Request.GetValue();
 
             var response = execute(client, request);
 
@@ -88,7 +88,11 @@ namespace WFLite.RestSharp.Activities
     public class RestActivity<TData> : RestActivity
         where TData : new()
     {
-        public RestActivity(IVariable baseUrl = null, IVariable request = null, IVariable response = null)
+        public RestActivity()
+        {
+        }
+
+        public RestActivity(IOutVariable baseUrl, IOutVariable<IRestRequest> request, IInVariable<IRestResponse> response)
             : base(baseUrl, request, response)
         {
         }
