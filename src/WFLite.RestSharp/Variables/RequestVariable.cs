@@ -17,8 +17,6 @@ namespace WFLite.RestSharp.Variables
 {
     public class RequestVariable : OutVariable<IRestRequest>
     {
-        private IRestRequest _request;
-
         public IOutVariable Resource
         {
             private get;
@@ -92,6 +90,8 @@ namespace WFLite.RestSharp.Variables
 
         protected sealed override object getValue()
         {
+            IRestRequest request = null;
+
             if (Resource != null)
             {
                 var resource = Resource.GetValueAsObject();
@@ -99,47 +99,47 @@ namespace WFLite.RestSharp.Variables
                 {
                     if (Method != null && DataFormat != null)
                     {
-                        _request = new RestRequest(resource as Uri, Method.GetValue(), DataFormat.GetValue());
+                        request = new RestRequest(resource as Uri, Method.GetValue(), DataFormat.GetValue());
                     }
                     else if (Method != null)
                     {
-                        _request = new RestRequest(resource as Uri, Method.GetValue());
+                        request = new RestRequest(resource as Uri, Method.GetValue());
                     }
                     else
                     {
-                        _request = new RestRequest(resource as Uri);
+                        request = new RestRequest(resource as Uri);
                     }
                 }
                 else if (resource is string)
                 {
                     if (Method != null && DataFormat != null)
                     {
-                        _request = new RestRequest(resource as string, Method.GetValue(), DataFormat.GetValue());
+                        request = new RestRequest(resource as string, Method.GetValue(), DataFormat.GetValue());
                     }
                     else if (Method != null)
                     {
-                        _request = new RestRequest(resource as string, Method.GetValue());
+                        request = new RestRequest(resource as string, Method.GetValue());
                     }
                     else
                     {
-                        _request = new RestRequest(resource as string);
+                        request = new RestRequest(resource as string);
                     }
                 }
                 else
                 {
-                    _request = new RestRequest();
+                    request = new RestRequest();
                 }
             }
             else
             {
-                _request = new RestRequest();
+                request = new RestRequest();
             }
 
             if (Headers != null)
             {
                 foreach (var header in Headers)
                 {
-                    _request.AddParameter(header.Key, header.Value.GetValueAsObject(), ParameterType.HttpHeader);
+                    request.AddParameter(header.Key, header.Value.GetValueAsObject(), ParameterType.HttpHeader);
                 }
             }
 
@@ -147,7 +147,7 @@ namespace WFLite.RestSharp.Variables
             {
                 foreach (var queryParameter in QueryParameters)
                 {
-                    _request.AddParameter(queryParameter.Key, queryParameter.Value.GetValueAsObject(), ParameterType.QueryString);
+                    request.AddParameter(queryParameter.Key, queryParameter.Value.GetValueAsObject(), ParameterType.QueryString);
                 }
             }
             
@@ -155,24 +155,24 @@ namespace WFLite.RestSharp.Variables
             {
                 foreach (var cookie in Cookies)
                 {
-                    _request.AddParameter(cookie.Key, cookie.Value.GetValueAsObject(), ParameterType.Cookie);
+                    request.AddParameter(cookie.Key, cookie.Value.GetValueAsObject(), ParameterType.Cookie);
                 }
             }
 
             if (Body != null)
             {
-                _request.AddParameter("application/json", Body.GetValueAsObject(), ParameterType.RequestBody);
+                request.AddParameter("application/json", Body.GetValueAsObject(), ParameterType.RequestBody);
             }
 
             if (UrlSegments != null)
             {
                 foreach (var urlSegment in UrlSegments)
                 {
-                    _request.AddParameter(urlSegment.Key, urlSegment.Value.GetValueAsObject(), ParameterType.UrlSegment);
+                    request.AddParameter(urlSegment.Key, urlSegment.Value.GetValueAsObject(), ParameterType.UrlSegment);
                 }
             }
 
-            return _request;
+            return request;
         }
     }
 }
