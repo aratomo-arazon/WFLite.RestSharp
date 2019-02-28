@@ -10,6 +10,7 @@
 using RestSharp;
 using System;
 using WFLite.Activities;
+using WFLite.Bases;
 using WFLite.Interfaces;
 
 namespace WFLite.RestSharp.Activities

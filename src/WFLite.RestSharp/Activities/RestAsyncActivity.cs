@@ -12,6 +12,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WFLite.Activities;
+using WFLite.Bases;
 using WFLite.Interfaces;
 
 namespace WFLite.RestSharp.Activities.Activities
